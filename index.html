@@ -9,22 +9,26 @@
       href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap"
       rel="stylesheet"
     />
+    <!-- Include XState library -->
+    <script src="https://unpkg.com/xstate@4/dist/xstate.js"></script>
   </head>
   <body>
     <div id="splash-screen">
       <h1 class="splash-title">My Chimera</h1>
       <p class="splash-subtitle">Press anywhere to start</p>
     </div>
-    <div class="container">
+
+    <div class="container" style="display: none;">
       <h1>MY CHIMERA</h1>
       <div class="stats">
-        <span>Hunger: <span id="hunger" style="color: orange">0</span></span>
+        <span>Hunger: <span id="hunger" class="stat-value">0</span></span>
 
         <div class="energy-container">
           <span class="energy-label">Energy:</span>
           <div class="energy-bar">
-            <span id="energy-value">10</span>
+            <div id="energy-fill"></div>
           </div>
+          <span id="energy-value" class="stat-value">10</span>
         </div>
       </div>
       <div class="chimera-box">
@@ -34,12 +38,12 @@
           alt="background"
         />
         <img class="chimera" src="assets/Chimera-Idle.gif" alt="chimera" />
-        <p id="status">I'M <span class="fine">[DOING FINE]</span> RIGHT NOW!</p>
+        <p id="status">I'M <span class="status-text fine">[DOING FINE]</span> RIGHT NOW!</p>
       </div>
       <div class="button-wrapper">
         <div id="feed" class="action">
           <button id="feed-button">FEED</button>
-          <p class="note-feed">+3 energy</p>
+          <p class="note-feed">-3 hunger</p>
         </div>
         <div class="action">
           <button id="play">PLAY</button>
@@ -51,6 +55,8 @@
         </div>
       </div>
     </div>
+
+    <button id="retry-button" class="hidden">RETRY</button>
 
     <script src="script.js"></script>
   </body>

@@ -4,6 +4,7 @@ body {
   color: #3a2f2f;
   margin: 0;
   padding: 0;
+  
 }
 
 .container {
@@ -49,6 +50,7 @@ h1 {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  display: block;
 }
 
 .chimera {
@@ -72,6 +74,13 @@ h1 {
   font-size: 16px;
   border-top: 2px solid #ccc; 
 }
+
+.status-text.fine { color: limegreen; font-weight: bold; }
+.status-text.happy { color: gold; font-weight: bold; }
+.status-text.full { color: lightblue; font-weight: bold; }
+.status-text.rested { color: lightgreen; font-weight: bold; }
+.status-text.grumpy { color: orange; font-weight: bold; }
+.status-text.sick { color: red; font-weight: bold; }
 
 .fine {
   color: #33cc66;
@@ -165,15 +174,19 @@ button {
   height: 20px;
   overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4c3b2a;
-  font-size: 14px;
-  font-weight: bold;
+  align-items: center; 
+  justify-content: flex-end;
+  position: relative;
+  padding: 0;
+  border: 1px solid #4c3b2a; 
 }
 
 #energy-fill {
-  display: none;
+  height: 100%;
+  width: 100%; 
+  background-color: green; 
+  transition: width 0.5s ease-in-out, background-color 0.3s ease;
+  border-radius: 10px; 
 }
 
 .energy-container {
@@ -222,3 +235,40 @@ button {
   color: #54AFF9;
 }
 
+#retry-button {
+    margin-top: 20px; 
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+#game-over-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    font-size: 1.8em;
+    font-weight: bold;
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+#retry-button:hover {
+    background-color: #45a049;
+}
+
+.hidden {
+    display: none;
+}
