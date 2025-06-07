@@ -3,13 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chimera-Idle</title>
+    <title>My Chimera</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap"
       rel="stylesheet"
     />
-    <!-- Include XState library -->
     <script src="https://unpkg.com/xstate@4/dist/xstate.js"></script>
   </head>
   <body>
@@ -17,12 +16,10 @@
       <h1 class="splash-title">My Chimera</h1>
       <p class="splash-subtitle">Press anywhere to start</p>
     </div>
-
-    <div class="container" style="display: none;">
+    <div class="container" style="display: none">
       <h1>MY CHIMERA</h1>
       <div class="stats">
         <span>Hunger: <span id="hunger" class="stat-value">0</span></span>
-
         <div class="energy-container">
           <span class="energy-label">Energy:</span>
           <div class="energy-bar">
@@ -38,26 +35,31 @@
           alt="background"
         />
         <img class="chimera" src="assets/Chimera-Idle.gif" alt="chimera" />
-        <p id="status">I'M <span class="status-text fine">[DOING FINE]</span> RIGHT NOW!</p>
+        <p id="status">
+          I'M <span class="status-text fine">[DOING FINE]</span> RIGHT NOW!
+        </p>
       </div>
       <div class="button-wrapper">
         <div id="feed" class="action">
           <button id="feed-button">FEED</button>
           <p class="note-feed">-3 hunger</p>
+          <div id="feed-options" class="feed-options" style="display: none">
+            <button class="food-option" data-food="cookies">Cookies</button>
+            <button class="food-option" data-food="milk">Milk</button>
+            <button class="food-option" data-food="fruits">Fruits</button>
+          </div>
         </div>
         <div class="action">
           <button id="play">PLAY</button>
-          <p class="note-play">-3 energy</p>
+          <p class="note-play">-3 energy<br>+happy</p>
         </div>
         <div class="action">
           <button id="sleep">SLEEP</button>
           <p class="note-sleep">+3 energy</p>
         </div>
       </div>
+      <button id="retry-main-button" class="retry-button-main">RETRY</button>
     </div>
-
-    <button id="retry-button" class="hidden">RETRY</button>
-
     <script src="script.js"></script>
   </body>
 </html>

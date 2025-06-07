@@ -4,26 +4,23 @@ body {
   color: #3a2f2f;
   margin: 0;
   padding: 0;
-  
 }
-
 .container {
   max-width: 400px;
   margin: 2rem auto;
   background-color: #f9f6ee;
-  border: 4px solidrgb(215, 120, 12);
+  border: 4px;
   border-radius: 10px;
   text-align: center;
   margin-top: 80px;
   padding: 20px;
+  position: relative; /* Added for positioning the retry button */
 }
-
 h1 {
   font-size: 36px;
   color: #4c3b2a;
   font-weight: bold;
 }
-
 .stats {
   display: flex;
   justify-content: space-between;
@@ -32,7 +29,6 @@ h1 {
   font-weight: bold;
   width: 280px;
 }
-
 .chimera-box {
   position: relative;
   width: 100%;
@@ -41,7 +37,6 @@ h1 {
   overflow: hidden;
   margin: 10px 0;
 }
-
 .background {
   height: 100%;
   width: auto;
@@ -52,7 +47,6 @@ h1 {
   transform: translateX(-50%);
   display: block;
 }
-
 .chimera {
   position: absolute;
   bottom: 18%;
@@ -60,7 +54,6 @@ h1 {
   width: 150px;
   transform: translateX(-50%);
 }
-
 .chimera-box #status {
   position: absolute;
   bottom: 0;
@@ -74,19 +67,16 @@ h1 {
   font-size: 16px;
   border-top: 2px solid #ccc; 
 }
-
 .status-text.fine { color: limegreen; font-weight: bold; }
 .status-text.happy { color: gold; font-weight: bold; }
 .status-text.full { color: lightblue; font-weight: bold; }
 .status-text.rested { color: lightgreen; font-weight: bold; }
 .status-text.grumpy { color: orange; font-weight: bold; }
 .status-text.sick { color: red; font-weight: bold; }
-
 .fine {
   color: #33cc66;
   font-weight: bold;
 }
-
 .button-wrapper {
   width: 280px; 
   margin: 0 auto;
@@ -95,7 +85,6 @@ h1 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-
 button {
   padding: 10px 15px;
   border: none;
@@ -105,22 +94,12 @@ button {
   font-size: 14px;
   cursor: pointer;
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
-  flex: 1; 
-  margin: 0 5px; 
+  width: 80px;
+  height: 40px;
 }
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  font-family: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
-
+button:hover {
+  transform: scale(1.05);
 }
-
 #splash-screen {
   position: fixed;
   top: 0;
@@ -136,18 +115,15 @@ button {
   font-family: 'Pixelify Sans', sans-serif;
   z-index: 9999;
 }
-
 .splash-title {
   font-size: 48px;
   font-weight: bold;
   margin: 0;
 }
-
 .splash-subtitle {
   font-size: 20px;
   margin-top: 10px;
 }
-
 .action {
   display: flex;
   flex-direction: column;
@@ -155,18 +131,33 @@ button {
   flex: 1;
   margin: 0 5px;
 }
-
 .note {
   font-size: 12px;
   margin-top: 6px;
   color: #888;
   font-weight: bold;
 }
-
+#feed-options {
+  position: absolute;
+  bottom: calc(100% + 10px); 
+  left: 50%; 
+  transform: translateX(-50%); 
+  gap: 6px;
+  z-index: 10; 
+  padding: 8px;
+  border-radius: 8px;
+  /* background-color: rgba(249, 246, 238, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+}
+.food-option:hover {
+  transform: scale(1.05);
+}
+#feed {
+  position: relative; 
+}
 .energy-label {
   font-weight: bold;
 }
-
 .energy-bar {
   background-color: #aaffaa;
   border-radius: 10px;
@@ -180,36 +171,28 @@ button {
   padding: 0;
   border: 1px solid #4c3b2a; 
 }
-
 #energy-fill {
   height: 100%;
   width: 100%; 
   background-color: green; 
-  transition: width 0.5s ease-in-out, background-color 0.3s ease;
   border-radius: 10px; 
 }
-
 .energy-container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
 .energy-label {
   font-weight: bold;
 }
-
 #energy-value {
   color: #37D026;
   font-size: 14px;
 }
-
-
 #hunger {
   color: orange;
   font-weight: bold;
 }
-
 .action:nth-child(1) button {
   background-color: #d6ccff;
   color: #9E6BEA
@@ -222,53 +205,48 @@ button {
   background-color: #cce6ff;
   color: #54AFF9
 }
-
 .action:nth-child(1) .note-feed {
   color: #9E6BEA;
 }
-
 .action:nth-child(2) .note-play {
   color: #F052AC;
 }
-
 .action:nth-child(3) .note-sleep {
   color: #54AFF9;
 }
-
-#retry-button {
-    margin-top: 20px; 
-    padding: 15px 30px;
-    font-size: 1.2em;
-    background-color: #4CAF50; /* Green */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s ease;
-    font-family: 'Pixelify Sans', sans-serif;
-}
-
-#game-over-message {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    font-size: 1.8em;
-    font-weight: bold;
-    text-align: center;
-    z-index: 100;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-}
-
-#retry-button:hover {
-    background-color: #45a049;
-}
-
 .hidden {
     display: none;
+}
+
+.retry-button {
+    background-color: #FF6B6B;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 15px;
+    text-align: center;
+    width: auto; 
+    height: auto;
+    border-radius: 8px;
+    box-shadow: none; 
+}
+
+.retry-button-main {
+    position: absolute;
+    top: 15px; 
+    right: 15px; 
+    background-color: #FFC0CB; 
+    color: #E21E5F;
+    padding: 8px 12px;
+    font-size: 12px;
+    width: auto; 
+    height: auto;
+    border-radius: 8px;
+    box-shadow: none; 
+}
+
+.retry-button-main:hover {
+    transform: scale(1.08);
 }
