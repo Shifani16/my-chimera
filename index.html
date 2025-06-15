@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <script src="https://unpkg.com/xstate@4/dist/xstate.js"></script>
+    <script src="https://unpkg.com/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js"></script>
   </head>
   <body>
     <div id="splash-screen">
@@ -35,9 +36,7 @@
           alt="background"
         />
         <img class="chimera" src="assets/Chimera-Idle.gif" alt="chimera" />
-        <p id="status">
-          I'M <span class="status-text fine">[DOING FINE]</span> RIGHT NOW!
-        </p>
+        <p id="status">I'M <span id="status-value-text" class="fine">[DOING FINE]</span> RIGHT NOW!</p>
       </div>
       <div class="button-wrapper">
         <div id="feed" class="action">
@@ -51,7 +50,7 @@
         </div>
         <div class="action">
           <button id="play">PLAY</button>
-          <p class="note-play">-3 energy<br>+happy</p>
+          <p class="note-play">-3 energy</p>
         </div>
         <div class="action">
           <button id="sleep">SLEEP</button>
@@ -60,6 +59,6 @@
       </div>
       <button id="retry-main-button" class="retry-button-main">RETRY</button>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
