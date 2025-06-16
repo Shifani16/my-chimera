@@ -1,6 +1,6 @@
 body {
   background-color: rgb(31, 31, 31);
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   color: #3a2f2f;
   margin: 0;
   padding: 0;
@@ -63,7 +63,7 @@ h1 {
   background: rgba(255, 255, 255, 0.9);
   padding: 8px 0;
   font-weight: bold;
-  color: #222; 
+  color: #222;
   z-index: 2;
   font-size: 16px;
   border-top: 2px solid #ccc;
@@ -73,13 +73,13 @@ h1 {
   color: limegreen;
 }
 #status-value-text.happy {
-  color: #F052AC;
+  color: #f052ac;
 }
 #status-value-text.full {
-  color: ##9E6BEA; 
+  color: ##9e6bea;
 }
 #status-value-text.rested {
-  color: #54AFF9
+  color: #54aff9;
 }
 #status-value-text.grumpy {
   color: orange;
@@ -87,7 +87,6 @@ h1 {
 #status-value-text.sick {
   color: red;
 }
-
 
 .button-wrapper {
   width: 280px;
@@ -124,7 +123,7 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   z-index: 9999;
 }
 .splash-title {
@@ -196,7 +195,7 @@ button:hover {
   font-weight: bold;
 }
 #energy-value {
-  color: #37D026;
+  color: #37d026;
   font-size: 14px;
 }
 #hunger {
@@ -205,58 +204,81 @@ button:hover {
 }
 .action:nth-child(1) button {
   background-color: #d6ccff;
-  color: #9E6BEA
+  color: #9e6bea;
 }
 .action:nth-child(2) button {
   background-color: #ffcce0;
-  color: #F052AC
+  color: #f052ac;
 }
 .action:nth-child(3) button {
   background-color: #cce6ff;
-  color: #54AFF9
+  color: #54aff9;
 }
 .action:nth-child(1) .note-feed {
-  color: #9E6BEA;
+  color: #9e6bea;
 }
 .action:nth-child(2) .note-play {
-  color: #F052AC;
+  color: #f052ac;
 }
 .action:nth-child(3) .note-sleep {
-  color: #54AFF9;
+  color: #54aff9;
 }
 .hidden {
-    display: none;
+  display: none;
 }
 
 .retry-button {
-    background-color: #FF6B6B;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 20px;
-    cursor: pointer;
-    margin-top: 15px;
-    text-align: center;
-    width: auto;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: none;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 15px;
+  text-align: center;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: none;
 }
 
 .retry-button-main {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #FFC0CB;
-    color: #E21E5F;
-    padding: 8px 12px;
-    font-size: 12px;
-    width: auto;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: none;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #ffc0cb;
+  color: #e21e5f;
+  padding: 8px 12px;
+  font-size: 12px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: none;
 }
 
 .retry-button-main:hover {
-    transform: scale(1.08);
+  transform: scale(1.08);
+}
+
+.pause-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: #ffc0cb;
+  color: #e21e5f;
+  padding: 8px 12px;
+  font-size: 12px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.pause-button:hover {
+  transform: scale(1.08); 
+}
+
+.pause-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }

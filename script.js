@@ -27,19 +27,19 @@ const assignRandomFunFact = assign({
 
 const isUnhealthyForGrumpy = (context) => {
   const unhealthy = context.hunger >= 5 || context.energy <= 5;
-  console.log(`Checking if grumpy: Hungger ${context.hunger}, Energy ${context.energy} -> ${unhealthy}`);
+  console.log(`Checking if grumpy: Hunger ${context.hunger}, Energy ${context.energy} -> ${unhealthy}`);
   return unhealthy;
 };
 
 const isUnhealthyForSick = (context) => {
   const sick = context.hunger >= 8 || context.energy <= 2;
-  console.log(`Checking if sick: Hungger ${context.hunger}, Energy ${context.energy} -> ${sick}`);
+  console.log(`Checking if sick: Hunger ${context.hunger}, Energy ${context.energy} -> ${sick}`);
   return sick;
 };
 
 const isHealthy = (context) => {
   const healthy = context.hunger < 5 && context.energy > 5;
-  console.log(`Checking if healthy: Hungger ${context.hunger}, Energy ${context.energy} -> ${healthy}`);
+  console.log(`Checking if healthy: Hunger ${context.hunger}, Energy ${context.energy} -> ${healthy}`);
   return healthy;
 };
 
@@ -63,6 +63,16 @@ const chimeraMachine = createMachine(
     id: "My Chimera",
     initial: "healthy_mood_normal",
     states: {
+      paused: {
+        description: "The game is paused.",
+        on: {
+          TOGGLE_PAUSE: "healthy_mood_normal", 
+          RESTART_GAME: {
+            target: 'healthy_mood_normal',
+            actions: () => event$$.next({ type: 'RESTART_GAME_FROM_PAUSE' }) 
+          }
+        }
+      },
       healthy_mood_normal: {
         description:
           "Chimera akan berada di state idle, sedang tidak berinteraksi atau menunjukkan perilaku tidak normal. Mood yang ditunjukkan sedang normal.",
@@ -90,6 +100,7 @@ const chimeraMachine = createMachine(
                 actions: [assignEnergy(-1), assignHunger(1)],
             }
           ],
+          TOGGLE_PAUSE: "paused"
         },
       },
       playing: {
@@ -102,6 +113,7 @@ const chimeraMachine = createMachine(
         },
         on: {
           time_check: undefined,
+          TOGGLE_PAUSE: "paused"
         }
       },
 
@@ -115,6 +127,7 @@ const chimeraMachine = createMachine(
             target: "stomach_full",
             actions: [assignHunger(-3), "trackFood"],
           },
+          TOGGLE_PAUSE: "paused"
         },
       },
       enough_sleep: {
@@ -125,6 +138,9 @@ const chimeraMachine = createMachine(
             target: "healthy_mood_normal",
           },
         },
+        on: {
+          TOGGLE_PAUSE: "paused"
+        }
       },
       mood_grumpy: {
         description:
@@ -153,6 +169,7 @@ const chimeraMachine = createMachine(
           feed: {
             target: "food_selection_grumpy",
           },
+          TOGGLE_PAUSE: "paused"
         },
       },
       stomach_full: {
@@ -172,6 +189,7 @@ const chimeraMachine = createMachine(
               energy: updateStat(context.energy, -5),
             })),
           },
+          TOGGLE_PAUSE: "paused"
         },
       },
       sick_mood_grumpy: {
@@ -192,10 +210,11 @@ const chimeraMachine = createMachine(
             cond: "is_unhealthy_for_grumpy",
           },
           {
-             target: "mood_grumpy"
+              target: "mood_grumpy"
           }
         ],
         on: {
+          TOGGLE_PAUSE: "paused"
         }
       },
       food_selection_grumpy: {
@@ -208,6 +227,7 @@ const chimeraMachine = createMachine(
             target: "recovered_status",
             actions: [assignHunger(-3), "trackFood"],
           },
+          TOGGLE_PAUSE: "paused"
         },
       },
     },
@@ -257,6 +277,9 @@ const splashScreen = document.getElementById('splash-screen');
 const container = document.querySelector('.container');
 const chimeraImageElement = document.querySelector('.chimera');
 const retryMainButton = document.getElementById('retry-main-button');
+const pauseButton = document.getElementById('pause-button'); 
+
+const mainActionButtons = [feedButton, playButton, sleepButton];
 
 const funFacts = [
   "Hello, my name is Fig Stew! Nice to meet you, kind human!.",
@@ -308,11 +331,34 @@ const updateMainUI = (state) => {
   let statusClass = "fine";
   let chimeraImgSrc = "assets/Chimera-Idle.gif";
 
-  [feedButton, playButton, sleepButton].forEach(btn => btn && (btn.disabled = false));
-  if (retryMainButton) retryMainButton.style.display = 'block';
-
   const existingGameOverDiv = document.getElementById('game-over-message');
   if (existingGameOverDiv) existingGameOverDiv.remove();
+  const existingPauseDiv = document.getElementById('pause-message');
+  if (existingPauseDiv) existingPauseDiv.remove();
+
+  mainActionButtons.forEach(btn => {
+      if (btn) btn.style.display = 'block';
+  });
+  if (retryMainButton) retryMainButton.style.display = 'block';
+  if (pauseButton) pauseButton.style.display = 'block';
+
+  const isPaused = state.matches('paused');
+
+  mainActionButtons.forEach(btn => {
+      if (btn) {
+          const isDisabledByEnergy = (btn === playButton && state.context.energy <= 5);
+          btn.disabled = isPaused || isDisabledByEnergy;
+
+          if (btn.disabled) {
+              btn.style.opacity = '0.5'; 
+              btn.style.cursor = 'not-allowed';
+          } else {
+              btn.style.opacity = '1';
+              btn.style.cursor = 'pointer';
+          }
+      }
+  });
+
 
   if (state.matches('healthy_mood_normal')) {
     dynamicText = "[DOING FINE]";
@@ -339,8 +385,7 @@ const updateMainUI = (state) => {
     statusClass = "sick";
     chimeraImgSrc = "assets/Chimera-Sick.gif";
 
-    [feedButton, playButton, sleepButton].forEach(btn => btn && (btn.disabled = true));
-    if (retryMainButton) retryMainButton.style.display = 'none';
+    [...mainActionButtons, retryMainButton, pauseButton].forEach(btn => btn && (btn.style.display = 'none'));
 
     const gameOverDiv = document.createElement('div');
     gameOverDiv.id = 'game-over-message';
@@ -373,8 +418,54 @@ const updateMainUI = (state) => {
     }
 
   } else if (state.matches('recovered_status')) {
-       dynamicText = "[CHECKING STATUS...]";
-       statusClass = "fine"; 
+        dynamicText = "[CHECKING STATUS...]";
+        statusClass = "fine"; 
+  } else if (state.matches('paused')) {
+    dynamicText = "[PAUSED]";
+    statusClass = "fine";
+    chimeraImgSrc = "assets/Chimera-Idle.gif"; 
+
+    if (retryMainButton) retryMainButton.style.display = 'none';
+    if (pauseButton) pauseButton.style.display = 'none';
+
+
+    const pauseDiv = document.createElement('div');
+    pauseDiv.id = 'pause-message';
+    pauseDiv.innerHTML = `
+        <p>Game Paused</p>
+        <button id="resume-button" class="retry-button">RESUME</button>
+    `;
+    pauseDiv.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        font-size: 1.5em;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    `;
+    document.body.appendChild(pauseDiv);
+
+    const resumeButton = document.getElementById('resume-button');
+    if (resumeButton && !resumeButton.dataset.listenerAdded) {
+      fromEvent(resumeButton, 'click')
+        .subscribe(() => event$$.next({ type: 'TOGGLE_PAUSE' }));
+      resumeButton.dataset.listenerAdded = 'true';
+    }
+
+    const restartFromPauseButton = document.getElementById('restart-from-pause-button');
+    if (restartFromPauseButton && !restartFromPauseButton.dataset.listenerAdded) {
+      fromEvent(restartFromPauseButton, 'click')
+        .subscribe(() => event$$.next({ type: 'RESTART_GAME' }));
+      restartFromPauseButton.dataset.listenerAdded = 'true';
+    }
   }
 
   if (statusParagraph) {
@@ -396,28 +487,18 @@ const updateMainUI = (state) => {
     console.error("Status paragraph element not found!");
   }
 
-
   if (chimeraImageElement) {
     chimeraImageElement.src = chimeraImgSrc;
   } else {
     console.error("Chimera image element not found!");
   }
-
-  if (playButton) {
-      playButton.disabled = state.context.energy <= 5;
-      if (state.context.energy <= 5) {
-          playButton.style.opacity = '0.5';
-          playButton.style.cursor = 'not-allowed';
-      } else {
-          playButton.style.opacity = '1';
-          playButton.style.cursor = 'pointer';
-      }
-  }
 };
 
 let chimeraService;
 let periodicCheckSubscription;
-let retryGameOverSubscription;
+let retryGameOverSubscription; 
+let resumeButtonSubscription; 
+let restartFromPauseButtonSubscription; 
 
 const startGame = () => {
   console.log("Starting game...");
@@ -439,11 +520,24 @@ const startGame = () => {
   }
 
   if (retryGameOverSubscription) {
-      retryGameOverSubscription.unsubscribe();
-      retryGameOverSubscription = null;
-      const retryBtn = document.getElementById('retry-game-over-button');
-      if (retryBtn) retryBtn.dataset.listenerAdded = '';
+    retryGameOverSubscription.unsubscribe();
+    retryGameOverSubscription = null;
+    const retryBtn = document.getElementById('retry-game-over-button');
+    if (retryBtn) retryBtn.dataset.listenerAdded = '';
   }
+  if (resumeButtonSubscription) {
+    resumeButtonSubscription.unsubscribe();
+    resumeButtonSubscription = null;
+    const resumeBtn = document.getElementById('resume-button');
+    if (resumeBtn) resumeBtn.dataset.listenerAdded = '';
+  }
+  if (restartFromPauseButtonSubscription) {
+    restartFromPauseButtonSubscription.unsubscribe();
+    restartFromPauseButtonSubscription = null;
+    const restartBtn = document.getElementById('restart-from-pause-button');
+    if (restartBtn) restartBtn.dataset.listenerAdded = '';
+  }
+
 
   chimeraService = interpret(chimeraMachine).start();
   console.log("New service started.");
@@ -453,18 +547,42 @@ const startGame = () => {
 
     if (state.matches('stomach_full') && state.context.consecutiveSameFoodCount > 3) {
         console.log("Detected >= 3 consecutive same food. Sending 'repeat_same_food_3_times' event.");
-        if (state.nextEvents.includes('repeat_same_food_3_times')) {
-            event$$.next({ type: 'repeat_same_food_3_times' });
-        } else {
-           console.warn("repeat_same_food_3_times event triggered but state cannot receive it.");
-        }
+        event$$.next({ type: 'repeat_same_food_3_times' });
+    }
+
+    if (state.matches('paused')) {
+      if (periodicCheckSubscription) {
+        periodicCheckSubscription.unsubscribe();
+        periodicCheckSubscription = null; 
+        console.log("Periodic check paused.");
+      }
+    } else {
+      mainActionButtons.forEach(btn => {
+          if (btn) btn.style.display = 'block';
+      });
+
+      if (retryMainButton) retryMainButton.style.display = 'block';
+      if (pauseButton) pauseButton.style.display = 'block';
+
+     
+      mainActionButtons.forEach(btn => {
+          if (btn) {
+              btn.disabled = false;
+              btn.style.opacity = '1';
+              btn.style.cursor = 'pointer';
+          }
+      });
+      if (pauseButton) pauseButton.textContent = 'PAUSE'; 
+
+
+      if (!periodicCheckSubscription || periodicCheckSubscription.closed) { 
+        periodicCheckSubscription = interval(5000).pipe(
+          map(() => ({ type: 'time_check' }))
+        ).subscribe(event$$.next.bind(event$$));
+        console.log("Periodic check resumed/started.");
+      }
     }
   });
-
-  periodicCheckSubscription = interval(5000).pipe(
-    map(() => ({ type: 'time_check' }))
-  ).subscribe(event$$.next.bind(event$$));
-    console.log("Periodic check subscription started.");
 
   event$$.subscribe(event => {
       console.log('Event sent to service:', event);
@@ -478,13 +596,30 @@ const restartGame = () => {
   console.log("Restarting game...");
 
   if (chimeraService) chimeraService.stop();
-  if (periodicCheckSubscription) periodicCheckSubscription.unsubscribe();
-  if (retryGameOverSubscription) {
-      retryGameOverSubscription.unsubscribe();
-      retryGameOverSubscription = null;
-      const retryBtn = document.getElementById('retry-game-over-button');
-      if (retryBtn) retryBtn.dataset.listenerAdded = '';
+  if (periodicCheckSubscription) {
+    periodicCheckSubscription.unsubscribe();
+    periodicCheckSubscription = null;
   }
+  
+  if (retryGameOverSubscription) {
+    retryGameOverSubscription.unsubscribe();
+    retryGameOverSubscription = null;
+    const retryBtn = document.getElementById('retry-game-over-button');
+    if (retryBtn) retryBtn.dataset.listenerAdded = '';
+  }
+  if (resumeButtonSubscription) {
+    resumeButtonSubscription.unsubscribe();
+    resumeButtonSubscription = null;
+    const resumeBtn = document.getElementById('resume-button');
+    if (resumeBtn) resumeBtn.dataset.listenerAdded = '';
+  }
+  if (restartFromPauseButtonSubscription) {
+    restartFromPauseButtonSubscription.unsubscribe();
+    restartFromPauseButtonSubscription = null;
+    const restartBtn = document.getElementById('restart-from-pause-button');
+    if (restartBtn) restartBtn.dataset.listenerAdded = '';
+  }
+
 
   updateEnergyBar(10);
   updateHungerUI(0);
@@ -499,15 +634,22 @@ const restartGame = () => {
   }
   if (chimeraImageElement) chimeraImageElement.src = "assets/Chimera-Idle.gif";
 
+ 
   const existingGameOverDiv = document.getElementById('game-over-message');
   if (existingGameOverDiv) existingGameOverDiv.remove();
+  const existingPauseDiv = document.getElementById('pause-message');
+  if (existingPauseDiv) existingPauseDiv.remove();
 
-  [feedButton, playButton, sleepButton].forEach(btn => btn && (btn.disabled = false));
-    if (playButton) {
-        playButton.style.opacity = '1';
-        playButton.style.cursor = 'pointer';
-    }
-  if (retryMainButton) retryMainButton.style.display = 'block';
+ 
+  [...mainActionButtons, retryMainButton, pauseButton].forEach(btn => btn && (btn.style.display = 'block'));
+  mainActionButtons.forEach(btn => {
+      if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+      }
+  });
+  if (pauseButton) pauseButton.textContent = 'PAUSE'; 
 
   if (container) {
     container.style.display = 'none';
@@ -554,6 +696,14 @@ if (retryMainButton) {
   ).subscribe(event$$.next.bind(event$$));
 } else {
   console.error("Retry main button not found!");
+}
+
+if (pauseButton) {
+  fromEvent(pauseButton, 'click').pipe(
+    map(() => ({ type: 'TOGGLE_PAUSE' }))
+  ).subscribe(event$$.next.bind(event$$));
+} else {
+  console.error("Pause button not found!");
 }
 
 event$$.pipe(
