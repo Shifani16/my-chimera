@@ -76,7 +76,7 @@ h1 {
   color: #f052ac;
 }
 #status-value-text.full {
-  color: ##9e6bea;
+  color: #9e6bea;
 }
 #status-value-text.rested {
   color: #54aff9;
@@ -88,7 +88,13 @@ h1 {
   color: red;
 }
 
+.status-highlight-purple {
+  color: #9e6bea; 
+  font-weight: bold;
+}
+
 .button-wrapper {
+  min-height: 120px;
   width: 280px;
   margin: 0 auto;
   display: flex;
@@ -96,6 +102,7 @@ h1 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
 button {
   padding: 10px 15px;
   border: none;
@@ -148,6 +155,7 @@ button:hover {
   color: #888;
   font-weight: bold;
 }
+
 #feed-options {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -158,15 +166,19 @@ button:hover {
   padding: 8px;
   border-radius: 8px;
 }
+
 .food-option:hover {
   transform: scale(1.05);
 }
+
 #feed {
   position: relative;
 }
+
 .energy-label {
   font-weight: bold;
 }
+
 .energy-bar {
   background-color: #aaffaa;
   border-radius: 10px;
@@ -180,49 +192,61 @@ button:hover {
   padding: 0;
   border: 1px solid #4c3b2a;
 }
+
 #energy-fill {
   height: 100%;
   width: 100%;
   background-color: green;
   border-radius: 10px;
 }
+
 .energy-container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .energy-label {
   font-weight: bold;
 }
+
 #energy-value {
   color: #37d026;
   font-size: 14px;
 }
+
 #hunger {
   color: orange;
   font-weight: bold;
 }
+
 .action:nth-child(1) button {
   background-color: #d6ccff;
   color: #9e6bea;
 }
+
 .action:nth-child(2) button {
   background-color: #ffcce0;
   color: #f052ac;
 }
+
 .action:nth-child(3) button {
   background-color: #cce6ff;
   color: #54aff9;
 }
+
 .action:nth-child(1) .note-feed {
   color: #9e6bea;
 }
+
 .action:nth-child(2) .note-play {
   color: #f052ac;
 }
+
 .action:nth-child(3) .note-sleep {
   color: #54aff9;
 }
+
 .hidden {
   display: none;
 }
@@ -281,4 +305,55 @@ button:hover {
 .pause-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+.feed-carousel-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.feed-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  height: 90px;
+  width: 100%;
+}
+
+.food-carousel-item {
+  height: 60px;
+  width: 60px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  opacity: 0.5;
+  filter: grayscale(80%);
+  transform: scale(0.75);
+}
+
+.food-carousel-item.active {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+#cancel-feed-button {
+  background-color: #888;
+  color: white;
+  width: auto;
+  height: auto;
+  padding: 8px 16px;
+  margin-top: 5px;
+  border-radius: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

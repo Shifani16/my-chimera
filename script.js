@@ -119,14 +119,15 @@ const chimeraMachine = createMachine(
 
       food_selection: {
         description:
-          "Player dapat memilih beberapa jenis makanan seperti cookies, milk, dan fruits",
-        entry: 'showFeedOptions',
-        exit: 'hideFeedOptions',
+          "Player dapat memilih beberapa jenis makanan seperti cookies, milk, dan honeycake",
+        entry: 'showFeedCarousel',
+        exit: 'hideFeedCarousel',
         on: {
           player_selecting: {
             target: "stomach_full",
             actions: [assignHunger(-3), "trackFood"],
           },
+          CANCEL_FEED: { target: 'healthy_mood_normal' },
           TOGGLE_PAUSE: "paused"
         },
       },
@@ -219,14 +220,15 @@ const chimeraMachine = createMachine(
       },
       food_selection_grumpy: {
         description:
-          "Player dapat memilih beberapa jenis makanan seperti cookies, milk, dan fruits",
-        entry: 'showFeedOptions',
-        exit: 'hideFeedOptions',
+          "Player dapat memilih beberapa jenis makanan seperti cookies, milk, dan honeycake",
+        entry: 'showFeedCarousel',
+        exit: 'hideFeedCarousel',
         on: {
           player_selecting: {
             target: "recovered_status",
             actions: [assignHunger(-3), "trackFood"],
           },
+          CANCEL_FEED: { target: 'mood_grumpy' },
           TOGGLE_PAUSE: "paused"
         },
       },
@@ -241,14 +243,24 @@ const chimeraMachine = createMachine(
       hunger: assignHunger,
       trackFood: trackFood,
       assignRandomFunFact: assignRandomFunFact, 
-      showFeedOptions: () => {
-        const feedOptions = document.getElementById('feed-options');
-        if (feedOptions) feedOptions.style.display = 'flex';
+      // showFeedOptions: () => {
+      //   const feedOptions = document.getElementById('feed-options');
+      //   if (feedOptions) feedOptions.style.display = 'flex';
+      // },
+      // hideFeedOptions: () => {
+      //   const feedOptions = document.getElementById('feed-options');
+      //   if (feedOptions) feedOptions.style.display = 'none';
+      // },
+      showFeedCarousel: () => {
+        if (actionButtonsContainer)
+          actionButtonsContainer.style.display = 'none';
+        if (feedCarouselContainer) feedCarouselContainer.style.display = 'flex';
+          updateCarouselView();
       },
-      hideFeedOptions: () => {
-        const feedOptions = document.getElementById('feed-options');
-        if (feedOptions) feedOptions.style.display = 'none';
-      },
+      hideFeedCarousel: () => {
+        if (feedCarouselContainer) feedCarouselContainer.style.display = 'none';
+        if (actionButtonsContainer) actionButtonsContainer.style.display = 'flex';
+      }
     },
     guards: {
       is_unhealthy_for_grumpy: isUnhealthyForGrumpy,
@@ -270,8 +282,13 @@ const statusTextSpan = document.getElementById('status-value-text');
 const feedButton = document.getElementById('feed-button');
 const playButton = document.getElementById('play');
 const sleepButton = document.getElementById('sleep');
-const feedOptionsDiv = document.getElementById('feed-options');
-const foodOptionButtons = document.querySelectorAll('.food-option');
+// const feedOptionsDiv = document.getElementById('feed-options');
+// const foodOptionButtons = document.querySelectorAll('.food-option');
+
+const actionButtonsContainer = document.getElementById('action-buttons-container');
+const feedCarouselContainer = document.getElementById('feed-carousel-container');
+const feedCarousel = document.getElementById('feed-carousel');
+const cancelFeedButton = document.getElementById('cancel-feed-button');
 
 const splashScreen = document.getElementById('splash-screen');
 const container = document.querySelector('.container');
@@ -280,6 +297,42 @@ const retryMainButton = document.getElementById('retry-main-button');
 const pauseButton = document.getElementById('pause-button'); 
 
 const mainActionButtons = [feedButton, playButton, sleepButton];
+
+const foodData = [
+  { name: 'cookie', src: 'assets/Food-Cookie.png', alt: 'Cookie' },
+  { name: 'milk', src: 'assets/Drink-Milk.png', alt: 'Milk' },
+  { name: 'honeycake', src: 'assets/Food-Honeycake.png', alt: 'Honeycake' }
+];
+
+let currentFoodOrder = ['cookie', 'milk', 'honeycake'];
+
+const updateCarouselView = () => {
+    if (!feedCarousel) return;
+    feedCarousel.innerHTML = '';
+    currentFoodOrder.forEach((foodName, index) => {
+        const food = foodData.find(f => f.name === foodName);
+        if (food) {
+            const img = document.createElement('img');
+            img.src = food.src;
+            img.alt = food.alt;
+            img.dataset.food = food.name;
+            img.classList.add('food-carousel-item');
+            if (index === 1) {
+                img.classList.add('active');
+            }
+            feedCarousel.appendChild(img);
+        }
+    });
+};
+
+const rotateCarousel = (direction) => {
+    if (direction === 'left') {
+        currentFoodOrder.push(currentFoodOrder.shift());
+    } else if (direction === 'right') {
+        currentFoodOrder.unshift(currentFoodOrder.pop());
+    }
+    updateCarouselView(); 
+};
 
 const funFacts = [
   "Hello, my name is Fig Stew! Nice to meet you, kind human!.",
@@ -360,7 +413,10 @@ const updateMainUI = (state) => {
   });
 
 
-  if (state.matches('healthy_mood_normal')) {
+  if (state.matches('food_selection') || state.matches('food_selection_grumpy')) {
+    statusParagraph.innerHTML = `What should I <span class="status-highlight-purple">[EAT]</span>?`;
+    chimeraImgSrc = "assets/Chimera-Idle.gif";
+  } else if (state.matches('healthy_mood_normal')) {
     dynamicText = "[DOING FINE]";
     statusClass = "fine";
     chimeraImgSrc = "assets/Chimera-Idle.gif";
@@ -371,9 +427,9 @@ const updateMainUI = (state) => {
   } else if (state.matches('stomach_full')) {
     dynamicText = "[FULL]";
     statusClass = "full";
-    chimeraImgSrc = "assets/Chimera-Happy.gif";
+    chimeraImgSrc = "assets/Chimera-Happy-Munch.gif";
   } else if (state.matches('enough_sleep')) {
-    dynamicText = "[RESTED]";
+    dynamicText = "[RESTING]";
     statusClass = "rested";
     chimeraImgSrc = "assets/Chimera-Sleep.gif";
   } else if (state.matches('mood_grumpy')) {
@@ -468,7 +524,7 @@ const updateMainUI = (state) => {
     }
   }
 
-  if (statusParagraph) {
+  if (statusParagraph && !state.matches('food_selection') && !state.matches('food_selection_grumpy')) {
     if (state.matches('playing')) {
       statusParagraph.textContent = dynamicText;
     } else {
@@ -479,11 +535,11 @@ const updateMainUI = (state) => {
     if (currentStatusTextSpan) {
         currentStatusTextSpan.classList.remove('fine', 'happy', 'full', 'rested', 'grumpy', 'sick');
         currentStatusTextSpan.classList.add(statusClass);
-    } else {
+    } else if (!state.matches('playing')) {
         statusParagraph.classList.remove('fine', 'happy', 'full', 'rested', 'grumpy', 'sick');
         statusParagraph.classList.add(statusClass);
     }
-  } else {
+  } else if (!statusParagraph) {
     console.error("Status paragraph element not found!");
   }
 
@@ -672,11 +728,11 @@ if (feedButton) {
   ).subscribe(event$$.next.bind(event$$));
 } else { console.error("Feed button not found!"); }
 
-foodOptionButtons.forEach(button => {
-  fromEvent(button, 'click').pipe(
-    map(event => ({ type: 'player_selecting', food: event.target.dataset.food }))
-  ).subscribe(event$$.next.bind(event$$));
-});
+// foodOptionButtons.forEach(button => {
+//   fromEvent(button, 'click').pipe(
+//     map(event => ({ type: 'player_selecting', food: event.target.dataset.food }))
+//   ).subscribe(event$$.next.bind(event$$));
+// });
 
 if (playButton) {
   fromEvent(playButton, 'click').pipe(
@@ -716,4 +772,36 @@ if (container) {
 }
 
 const feedOptions = document.getElementById('feed-options');
-if (feedOptions) feedOptions.style.display = 'none';
+// if (feedOptions) feedOptions.style.display = 'none';
+
+if (feedCarousel) {
+    fromEvent(feedCarousel, 'click')
+        .pipe(
+            filter(event => event.target.classList.contains('food-carousel-item'))
+        )
+        .subscribe(event => {
+            const clickedItem = event.target;
+            const foodName = clickedItem.dataset.food;
+            
+            if (clickedItem.classList.contains('active')) {
+                event$$.next({ type: 'player_selecting', food: foodName });
+            } else {
+                const clickedIndex = currentFoodOrder.indexOf(foodName);
+                if (clickedIndex === 0) { 
+                    rotateCarousel('right'); 
+                } else if (clickedIndex === 2) { 
+                    rotateCarousel('left'); 
+                }
+            }
+        });
+}  else { 
+  console.error("Feed carousel tidak ditemukan!"); 
+}
+
+if (cancelFeedButton) {
+  fromEvent(cancelFeedButton, 'click')
+    .pipe(map(() => ({ type: 'CANCEL_FEED' })))
+    .subscribe(event$$.next.bind(event$$));
+} else {
+  console.error("Tombol cancel feed tidak ditemukan!");
+}

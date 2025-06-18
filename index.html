@@ -12,11 +12,13 @@
     <script src="https://unpkg.com/xstate@4/dist/xstate.js"></script>
     <script src="https://unpkg.com/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js"></script>
   </head>
+
   <body>
     <div id="splash-screen">
       <h1 class="splash-title">My Chimera</h1>
       <p class="splash-subtitle">Press anywhere to start</p>
     </div>
+
     <div class="container" style="display: none">
       <button id="pause-button" class="pause-button">PAUSE</button>
 
@@ -31,6 +33,7 @@
           <span id="energy-value" class="stat-value">10</span>
         </div>
       </div>
+
       <div class="chimera-box">
         <img
           class="background"
@@ -40,8 +43,32 @@
         <img class="chimera" src="assets/Chimera-Idle.gif" alt="chimera" />
         <p id="status">I'M <span id="status-value-text" class="fine">[DOING FINE]</span> RIGHT NOW!</p>
       </div>
+
       <div class="button-wrapper">
-        <div id="feed" class="action">
+        <div id="action-buttons-container" style="display: flex; justify-content: space-between; width: 100%;">
+          <div id="feed" class="action">
+            <button id="feed-button">FEED</button>
+            <p class="note-feed">-3 hunger</p>
+          </div>
+
+          <div class="action">
+            <button id="play">PLAY</button>
+            <p class="note-play">-3 energy</p>
+          </div>
+
+          <div class="action">
+            <button id="sleep">SLEEP</button>
+            <p class="note-sleep">+3 energy</p>
+          </div>
+        </div>
+
+        <div id="feed-carousel-container" class="feed-carousel-container" style="display: none;">
+          <div id="feed-carousel" class="feed-carousel">
+          </div>
+          <button id="cancel-feed-button">BACK</button>
+        </div>
+
+        <!-- <div id="feed" class="action">
           <button id="feed-button">FEED</button>
           <p class="note-feed">-3 hunger</p>
           <div id="feed-options" class="feed-options" style="display: none">
@@ -50,15 +77,18 @@
             <button class="food-option" data-food="fruits">Fruits</button>
           </div>
         </div>
+
         <div class="action">
           <button id="play">PLAY</button>
           <p class="note-play">-3 energy</p>
         </div>
+        
         <div class="action">
           <button id="sleep">SLEEP</button>
           <p class="note-sleep">+3 energy</p>
-        </div>
+        </div> -->
       </div>
+
       <button id="retry-main-button" class="retry-button-main">RETRY</button>
     </div>
     <script type="module" src="script.js"></script>
