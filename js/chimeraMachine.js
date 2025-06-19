@@ -210,7 +210,8 @@ export const chimeraMachine = createMachine(
       recovered_status: {
         description:
           "Status akan berganti secara dinamis sesuai dengan opsi yang dipilih player untuk memulihkan status",
-        always: [
+        after: {
+          100: [
           {
             target: "healthy_mood_normal",
             cond: "is_healthy",
@@ -222,7 +223,8 @@ export const chimeraMachine = createMachine(
           {
             target: "mood_grumpy"
           }
-        ],
+          ]
+        },
         on: {
           TOGGLE_PAUSE: "paused"
         }
